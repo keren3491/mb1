@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Synagogue Message Board Presentation</title>
+<style>
+:root{--navy:#091b38;--blue:#185391;--gold:#d3aa4a;--white:#fff;--light:#eff4fa;--dark:#161f2b;--gray:#5f6978}
+*{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#071426;color:var(--white);overflow-x:hidden}
+.deck{height:100vh;overflow-y:auto;scroll-snap-type:y mandatory}.slide{min-height:100vh;scroll-snap-align:start;position:relative;padding:6vh 6vw 8vh;display:flex;flex-direction:column;justify-content:center;background:var(--navy)}
+.slide.light{background:var(--light);color:var(--dark)} .frame{position:absolute;inset:4vh 2.6vw;border:3px solid var(--gold);pointer-events:none}
+.kicker{font-size:2rem;color:var(--gold);text-align:center;margin-bottom:1.2rem}.title{font-size:clamp(2.3rem,5vw,4.6rem);line-height:1.03;font-weight:800;margin:0 0 1rem}.subtitle{font-size:clamp(1rem,1.8vw,1.4rem);color:#dfe7f1;margin-bottom:2.2rem}.light .subtitle{color:var(--gray)}
+.center{text-align:center}.gold{color:var(--gold)} .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:1.6rem}.cards.two{grid-template-columns:repeat(2,1fr)}
+.card{border:2px solid var(--gold);border-radius:18px;background:#102a4c;padding:1.5rem 1.6rem;box-shadow:0 10px 30px rgba(0,0,0,.15)} .light .card{background:white}.card h3{margin:.1rem 0 1rem;color:var(--gold);font-size:1.45rem}.light .card h3{color:var(--blue)}.card ul{margin:0;padding-left:1.2rem}.card li{margin:.55rem 0;line-height:1.35}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:1.4rem}.tile{background:white;border:2px solid var(--gold);border-radius:18px;padding:1.4rem;text-align:center;color:var(--navy);font-weight:700;font-size:1.15rem;min-height:120px;display:flex;align-items:center;justify-content:center}
+.bigcopy{max-width:1050px;margin:0 auto;text-align:center;font-size:clamp(1.2rem,2.2vw,2rem);line-height:1.5}.bigcopy strong{display:block;color:var(--gold);font-size:clamp(1.8rem,3vw,2.8rem);margin-bottom:1rem}
+.cta{font-size:clamp(2rem,4vw,3.7rem);font-weight:800;color:var(--gold);text-align:center}.contact{text-align:center;font-size:clamp(1.25rem,2vw,1.8rem);line-height:1.7}
+.footer{position:absolute;left:5.4vw;right:5.4vw;bottom:2.3vh;border-top:2px solid var(--gold);padding-top:.55rem;color:#dfe7f1;font-size:.82rem}.light .footer{color:var(--gray)}
+.nav{position:fixed;right:18px;top:50%;transform:translateY(-50%);z-index:20;display:flex;flex-direction:column;gap:8px}.nav button{width:11px;height:11px;padding:0;border-radius:50%;border:1px solid #fff;background:rgba(255,255,255,.35);cursor:pointer}.controls{position:fixed;left:16px;bottom:16px;z-index:30;display:flex;gap:8px}.controls button{border:1px solid rgba(255,255,255,.35);background:rgba(0,0,0,.35);color:#fff;border-radius:10px;padding:.55rem .75rem;cursor:pointer;backdrop-filter:blur(5px)}
+@media(max-width:900px){.cards,.cards.two,.tiles{grid-template-columns:1fr}.slide{padding:7vh 7vw 11vh}.nav{display:none}.footer{font-size:.72rem}}
+</style>
+</head>
+<body>
+<div class="deck" id="deck">
+<section class="slide center"><div class="frame"></div><div class="kicker">✡</div><h1 class="title">SYNAGOGUE<br>MESSAGE BOARD</h1><p class="subtitle gold">A Beautiful Digital Information Center for Your Synagogue</p><div class="contact">CEE LTD • Emmanuel Hileah Innovations</div><div class="footer">CEE LTD • Emmanuel Hileah Innovations &nbsp; | &nbsp; 1</div></section>
+
+<section class="slide light"><h2 class="title">Turn Any TV Into a Synagogue Information Center</h2><p class="subtitle">Clear, elegant, continuously updated information for members and visitors.</p><div class="cards">
+<div class="card"><h3>Prayer & Jewish Life</h3><ul><li>Shacharit, Mincha & Maariv</li><li>Zmanim and Shabbat times</li><li>Candle-lighting & Havdalah</li><li>Parashat HaShavua</li></ul></div>
+<div class="card"><h3>Torah & Community</h3><ul><li>Daf Yomi</li><li>Daily Torah lessons</li><li>Events and announcements</li><li>Shiurim and special programs</li></ul></div>
+<div class="card"><h3>Honor & Remembrance</h3><ul><li>Yahrzeits and memorials</li><li>Digital candle memorial page</li><li>Donor recognition</li><li>Customized community messages</li></ul></div>
+</div><div class="footer">CEE LTD • Emmanuel Hileah Innovations &nbsp; | &nbsp; 2</div></section>
+
+<section class="slide"><h2 class="title">Designed for the Synagogue — Not a Generic Sign</h2><div class="cards two">
+<div class="card"><h3>Beautiful Presentation</h3><ul><li>Full-screen TV display</li><li>Large readable text</li><li>Decorative Jewish-themed frames</li><li>Smooth page rotation and scrolling</li><li>Special visual pages for Shabbat and memorials</li></ul></div>
+<div class="card"><h3>Easy Administration</h3><ul><li>Update content without redesigning the board</li><li>Control prayer times and announcements</li><li>Edit memorial and lesson content</li><li>Adjust display behavior for the synagogue</li><li>Built for everyday operation</li></ul></div>
+</div><div class="footer">CEE LTD • Emmanuel Hileah Innovations &nbsp; | &nbsp; 3</div></section>
+
+<section class="slide light"><h2 class="title">What Members See Every Day</h2><p class="subtitle">One screen can keep the congregation informed throughout the day.</p><div class="tiles">
+<div class="tile">Current Hebrew & Gregorian date</div><div class="tile">New York / Israel time</div><div class="tile">Today's prayer schedule</div><div class="tile">Zmanim</div><div class="tile">Daf Yomi</div><div class="tile">Daily shiur</div><div class="tile">Upcoming events</div><div class="tile">Memorials & dedications</div>
+</div><div class="footer">CEE LTD • Emmanuel Hileah Innovations &nbsp; | &nbsp; 4</div></section>
+
+<section class="slide"><h2 class="title">Special Rotating Pages</h2><div class="cards">
+<div class="card"><h3>Daily Torah</h3><ul><li>Dedicated שיעור יומי page</li><li>Daf Yomi content</li><li>Readable scrolling text</li><li>Keeps learning visible throughout the day</li></ul></div>
+<div class="card"><h3>Memorial Page</h3><ul><li>Digital memorial candles</li><li>Names displayed respectfully</li><li>Dedication text</li><li>Elegant standalone presentation</li></ul></div>
+<div class="card"><h3>Visual Moments</h3><ul><li>Jerusalem imagery</li><li>Jewish historical scenes</li><li>White doves and tasteful transitions</li><li>Welcoming opening presentation</li></ul></div>
+</div><div class="footer">CEE LTD • Emmanuel Hileah Innovations &nbsp; | &nbsp; 5</div></section>
+
+<section class="slide light"><h2 class="title">Why Synagogues Benefit</h2><p class="subtitle">A modern board reduces clutter while making important information easier to see.</p><div class="cards two">
+<div class="card"><h3>For the Congregation</h3><ul><li>Information is visible at a glance</li><li>Large TV-friendly design</li><li>Important times stay prominent</li><li>Community events receive more exposure</li></ul></div>
+<div class="card"><h3>For Administration</h3><ul><li>One central place for announcements</li><li>Fast content updates</li><li>Less dependence on printed notices</li><li>A consistent professional presentation</li></ul></div>
+</div><div class="footer">CEE LTD • Emmanuel Hileah Innovations &nbsp; | &nbsp; 6</div></section>
+
+<section class="slide"><h2 class="title">Customized for Your Synagogue</h2><div class="bigcopy"><strong>Your synagogue. Your identity. Your information.</strong>We can customize the board with your synagogue name, logo, prayer schedule, community announcements, donor information, memorials, lessons and preferred visual style.<br><br>The goal is a display that feels like part of your synagogue — not an off-the-shelf advertising screen.</div><div class="footer">CEE LTD • Emmanuel Hileah Innovations &nbsp; | &nbsp; 7</div></section>
+
+<section class="slide center"><div class="frame"></div><h2 class="title">Bring Your Synagogue Message Board to Life</h2><div class="cta">Request a Demonstration</div><div class="contact"><strong>CEE LTD</strong><br>Emmanuel Hileah Innovations<br><strong>+1 (516) 376-4118</strong></div><div class="footer">CEE LTD • Emmanuel Hileah Innovations &nbsp; | &nbsp; 8</div></section>
+</div>
+<div class="nav" id="nav"></div>
+<div class="controls"><button id="prev">◀</button><button id="next">▶</button><button id="auto">Auto: Off</button></div>
+<script>
+const deck=document.getElementById('deck'); const slides=[...document.querySelectorAll('.slide')]; const nav=document.getElementById('nav'); let timer=null;
+slides.forEach((s,i)=>{const b=document.createElement('button');b.title=`Slide ${i+1}`;b.onclick=()=>s.scrollIntoView({behavior:'smooth'});nav.appendChild(b)});
+function idx(){return Math.round(deck.scrollTop/window.innerHeight)} function go(n){slides[(n+slides.length)%slides.length].scrollIntoView({behavior:'smooth'})}
+document.getElementById('next').onclick=()=>go(idx()+1); document.getElementById('prev').onclick=()=>go(idx()-1);
+document.addEventListener('keydown',e=>{if(['ArrowDown','ArrowRight','PageDown',' '].includes(e.key))go(idx()+1);if(['ArrowUp','ArrowLeft','PageUp'].includes(e.key))go(idx()-1)});
+document.getElementById('auto').onclick=function(){if(timer){clearInterval(timer);timer=null;this.textContent='Auto: Off'}else{timer=setInterval(()=>go(idx()+1),10000);this.textContent='Auto: 10s'}};
+</script>
+</body>
+</html>
