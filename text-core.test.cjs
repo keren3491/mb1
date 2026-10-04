@@ -1,0 +1,15 @@
+const assert = require('node:assert/strict');
+const c = require('./text-core.js');
+assert.equal(c.phone('+1 (212) 555-0100'), '+12125550100');
+assert.equal(c.phone('555&body=oops'), '');
+assert.equal(c.phone('123'), '');
+assert.deepEqual(c.contactsFromCSV('Name,Phone\r\n"Doe, Jane",+12125550100\r\n"Sam ""S""",2125550101'), [{ name: 'Doe, Jane', phone: '+12125550100' }, { name: 'Sam "S"', phone: '2125550101' }]);
+assert.equal(c.contactsFromCSV('First Name,Last Name,Mobile Phone\nJane,Doe,2125550100')[0].name, 'Jane Doe');
+assert.throws(() => c.contactsFromCSV('Name,Email\nJane,a@example.com'), /Phone/);
+assert.throws(() => c.csvRows('Name,Phone\n"Jane,2125550100'), /unclosed/);
+assert.deepEqual(c.contactsFromVCF('BEGIN:VCARD\r\nVERSION:3.0\r\nFN:Jane Doe\r\nTEL;TYPE=CELL:+1 (212) 555-0100\r\nTEL;TYPE=HOME:2125550101\r\nEND:VCARD'), [{ name: 'Jane Doe', phone: '+1 (212) 555-0100' }, { name: 'Jane Doe', phone: '2125550101' }]);
+assert.equal(c.contactsFromVCF('BEGIN:VCARD\nN:Doe;Jane;;;\nTEL;VALUE=uri:tel:+12125550100\nEND:VCARD')[0].name, 'Jane Doe');
+assert.equal(c.personalized('Hi {FirstName}: {FullName}', { name: 'Jane Doe' }), 'Hi Jane: Jane Doe');
+assert.equal(c.smsURL({ name: 'Jane', phone: '+12125550100' }, 'Hi {FirstName} & hello', true), 'sms:+12125550100&body=Hi%20Jane%20%26%20hello');
+assert.equal(c.smsURL({ name: 'Jane', phone: '2125550100' }, 'Hi', false), 'sms:2125550100?body=Hi');
+console.log('Contact import, validation, personalization, and SMS URL checks passed.');

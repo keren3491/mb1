@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <meta name="theme-color" content="#0b1730" />
   <link rel="manifest" href="manifest.webmanifest" />
-  <link rel="apple-touch-icon" href="icon-192.png" />
+
   <title>TextRunner</title>
   <style>
     :root{
@@ -34,7 +34,7 @@
     .card h2{font-size:17px;margin:0 0 10px}
     textarea,input,select{
       width:100%;background:#0a1529;color:var(--text);border:1px solid #2a426d;
-      border-radius:12px;padding:12px;font-size:16px;outline:none
+      border-radius:12px;padding:12px;font-size:16px;outline-offset:3px
     }
     textarea{min-height:120px;resize:vertical}
     .row{display:flex;gap:8px;flex-wrap:wrap}
@@ -45,7 +45,7 @@
     button.secondary{background:#243654}
     button.green{background:#17a84a}
     button.danger{background:#a52b3a}
-    button:disabled{opacity:.45}
+    button:disabled{opacity:.45} button{cursor:pointer} button:disabled{cursor:default} :focus-visible{outline:3px solid var(--blue);outline-offset:3px}
     .contact{
       display:flex;align-items:center;gap:10px;padding:10px;border-bottom:1px solid #1e3152
     }
@@ -85,20 +85,15 @@
   <div class="grid two">
     <section class="card">
       <h2>Message template</h2>
-      <textarea id="template">Hi {FirstName}, wishing you a happy holiday!</textarea>
+      <label for="template" class="small">Your message</label>
+<textarea id="template">Hi {FirstName}, wishing you a happy holiday!</textarea>
       <div class="small" style="margin-top:6px">Use <b>{FirstName}</b> and <b>{FullName}</b>.</div>
     </section>
 
     <section class="card">
-      <h2>Delay & batch</h2>
-      <label class="small">Delay between contacts</label>
-      <select id="delay">
-        <option value="1000">1 second</option>
-        <option value="2000">2 seconds</option>
-        <option value="3000">3 seconds</option>
-        <option value="5000">5 seconds</option>
-      </select>
-      <div class="row" style="margin-top:10px">
+      <h2>Contact batches</h2>
+<div class="small">Choose up to 100 contacts at a time. Each message opens when you tap.</div>
+<div class="row" style="margin-top:10px">
         <button id="first100">First 100</button>
         <button id="next100">Next 100</button>
         <button id="prev100" class="secondary">Previous 100</button>
@@ -110,20 +105,26 @@
   <section class="card" style="margin-top:14px">
     <h2>Contacts</h2>
     <div class="warn">
-      iPhone web apps cannot silently read your entire Contacts database. Use <b>Import Contacts</b> if your Safari/iOS version supports it, or add contacts manually. Each message still opens separately in Messages.
+      Import a vCard (.vcf) exported from Contacts or a CSV with Name and Phone columns. You can also add contacts manually. Contact files stay in this browser.
     </div>
 
     <div class="row" style="margin-top:10px">
       <button id="pickContacts" class="green">Import Contacts</button>
       <button id="addManual" class="secondary">Add Manually</button>
       <button id="selectAll" class="secondary">Select All</button>
-      <button id="clearAll" class="secondary">Clear</button>
+      <button id="clearAll" class="secondary">Deselect All</button>
     </div>
 
-    <div id="manualBox" class="manual hidden" style="margin-top:10px">
+    <p id="pickerHelp" class="small"></p>
+<label for="contactFile">Import contact file (.vcf or .csv)</label>
+<input id="contactFile" type="file" accept=".vcf,.csv,text/vcard,text/csv" />
+<p class="small">On iPhone, export a Contacts list using its Export option, save it to Files, then choose it here. For a spreadsheet, save as CSV first. Include country codes for international contacts.</p>
+<p id="emptyContacts" class="small">No contacts yet. Import a file or add a contact.</p>
+<p id="storageWarning" class="warn" hidden>Your browser cannot save progress. Keep this page open until you finish.</p>
+<div id="manualBox" class="manual hidden" style="margin-top:10px">
       <div class="line">
-        <input id="manualName" placeholder="Name" />
-        <input id="manualPhone" placeholder="Phone number" inputmode="tel" />
+        <input id="manualName" aria-label="Contact name" placeholder="Name" />
+        <input id="manualPhone" aria-label="Phone number" placeholder="Phone number" inputmode="tel" />
         <button id="saveManual" class="green">Add</button>
       </div>
     </div>
@@ -144,13 +145,14 @@
     </div>
   </section>
 
-  <div class="status">
+  <section class="card" style="margin-top:14px" aria-label="Message preview"><h2>Current message</h2><div id="progress" class="small"></div><p id="recipient"></p><div id="preview" style="white-space:pre-wrap;overflow-wrap:anywhere"></div><div class="row" style="margin-top:12px"><button id="sent" class="green">Sent / Next</button><button id="retry" class="secondary">Reopen</button><button id="skip" class="secondary">Skip Contact</button></div><p class="small">Open Message launches your messaging app. Tap Send there, then return and confirm with Sent / Next. Skip moves past a contact without marking it sent.</p></section>
+<div class="status">
     <div class="statusline">
       <div>
-        <div id="statusText">Ready</div>
+        <div id="statusText" role="status" aria-live="polite">Ready</div>
         <div class="small">
           Selected <span id="selectedCount" class="count">0</span> ·
-          Processed <span id="processedCount" class="count">0</span>
+          Completed / skipped <span id="processedCount" class="count">0</span>
         </div>
       </div>
       <button id="nextNow">Next Message</button>
@@ -158,137 +160,7 @@
   </div>
 </div>
 
-<script>
-let contacts = JSON.parse(localStorage.getItem('textrunner_contacts') || '[]');
-let selected = new Set(JSON.parse(localStorage.getItem('textrunner_selected') || '[]'));
-let batchStart = parseInt(localStorage.getItem('textrunner_batchStart') || '0',10);
-let queue = [];
-let currentIndex = 0;
-let processed = 0;
-let running = false;
-let paused = false;
-let timer = null;
-
-const $ = id => document.getElementById(id);
-const template = $('template');
-const delay = $('delay');
-
-template.value = localStorage.getItem('textrunner_template') || template.value;
-delay.value = localStorage.getItem('textrunner_delay') || '1000';
-
-template.addEventListener('input',()=>localStorage.setItem('textrunner_template',template.value));
-delay.addEventListener('change',()=>localStorage.setItem('textrunner_delay',delay.value));
-
-function save(){
-  localStorage.setItem('textrunner_contacts',JSON.stringify(contacts));
-  localStorage.setItem('textrunner_selected',JSON.stringify([...selected]));
-  localStorage.setItem('textrunner_batchStart',String(batchStart));
-}
-function render(){
-  const box = $('contacts');
-  box.innerHTML='';
-  contacts.forEach((c,i)=>{
-    const row=document.createElement('div');
-    row.className='contact';
-    const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=selected.has(i);
-    cb.onchange=()=>{cb.checked?selected.add(i):selected.delete(i);save();updateCounts();};
-    const meta=document.createElement('div'); meta.className='meta';
-    meta.innerHTML=`<div class="name">${escapeHtml(c.name || c.phone)}</div><div class="phone">${escapeHtml(c.phone)}</div>`;
-    row.append(cb,meta); box.appendChild(row);
-  });
-  $('batchInfo').textContent=`Batch starts at ${contacts.length ? batchStart+1 : 0}`;
-  updateCounts();
-}
-function updateCounts(){
-  $('selectedCount').textContent=selected.size;
-  $('processedCount').textContent=processed;
-}
-function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
-function selectBatch(start){
-  if(!contacts.length)return;
-  batchStart=Math.max(0,Math.min(start,Math.max(0,contacts.length-1)));
-  selected.clear();
-  for(let i=batchStart;i<Math.min(batchStart+100,contacts.length);i++) selected.add(i);
-  save(); render();
-}
-$('first100').onclick=()=>selectBatch(0);
-$('next100').onclick=()=>selectBatch(batchStart+100);
-$('prev100').onclick=()=>selectBatch(batchStart-100);
-$('selectAll').onclick=()=>{contacts.forEach((_,i)=>selected.add(i));save();render();};
-$('clearAll').onclick=()=>{selected.clear();save();render();};
-
-$('addManual').onclick=()=> $('manualBox').classList.toggle('hidden');
-$('saveManual').onclick=()=>{
-  const name=$('manualName').value.trim(), phone=$('manualPhone').value.trim();
-  if(!phone) return alert('Enter a phone number.');
-  contacts.push({name,phone}); $('manualName').value=''; $('manualPhone').value=''; save(); render();
-};
-
-$('pickContacts').onclick=async()=>{
-  try{
-    if(!('contacts' in navigator) || !('ContactsManager' in window)) throw new Error();
-    const props=['name','tel'];
-    const opts={multiple:true};
-    const picked=await navigator.contacts.select(props,opts);
-    for(const p of picked){
-      const name=(p.name&&p.name[0])||'';
-      const phone=(p.tel&&p.tel[0])||'';
-      if(phone) contacts.push({name,phone});
-    }
-    save(); render();
-  }catch(e){
-    alert('Full contact import is not available in this iPhone browser. Use Add Manually, or import through a compatible browser/device.');
-  }
-};
-
-function personalized(c){
-  const first=(c.name||'').trim().split(/\s+/)[0] || c.name || '';
-  return template.value.replaceAll('{FirstName}',first).replaceAll('{FullName}',c.name||'');
-}
-function smsURL(c){
-  const body=encodeURIComponent(personalized(c));
-  return `sms:${encodeURIComponent(c.phone)}&body=${body}`;
-}
-function start(){
-  queue=[...selected].sort((a,b)=>a-b);
-  currentIndex=0; processed=0; running=true; paused=false;
-  $('statusText').textContent=`Ready to message ${queue.length} contacts`;
-  updateCounts();
-}
-function stop(){
-  running=false; paused=false; clearTimeout(timer); timer=null;
-  $('statusText').textContent='Stopped';
-}
-function pause(){if(running){paused=true;$('statusText').textContent='Paused';}}
-function resume(){if(running){paused=false;$('statusText').textContent='Resumed';}}
-function nextMessage(){
-  if(!running) start();
-  if(paused) return;
-  if(currentIndex>=queue.length){running=false;$('statusText').textContent='Finished';return;}
-  const idx=queue[currentIndex++];
-  const c=contacts[idx];
-  processed++;
-  updateCounts();
-  $('statusText').textContent=`Opening message for ${c.name || c.phone}`;
-  location.href=smsURL(c);
-  clearTimeout(timer);
-  timer=setTimeout(()=>{
-    if(running && !paused && currentIndex<queue.length){
-      $('statusText').textContent='Tap Next Message for the next contact';
-    }
-  }, parseInt(delay.value,10));
-}
-$('start').onclick=start;
-$('stop').onclick=stop;
-$('pause').onclick=pause;
-$('resume').onclick=resume;
-$('nextNow').onclick=nextMessage;
-
-render();
-
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('./sw.js').catch(()=>{});
-}
-</script>
+<script src="text-core.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
